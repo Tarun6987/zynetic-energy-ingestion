@@ -29,17 +29,16 @@ export default function Home() {
         </section>
 
         <section className="rounded-xl border border-zinc-200 bg-white p-5">
-          <h2 className="text-base font-semibold">How to use</h2>
+          <h2 className="text-base font-semibold">How to use (Production)</h2>
           <div className="mt-2 grid gap-2 text-sm text-zinc-700">
             <p>
-              1. Start the API at <code className="rounded bg-zinc-100 px-1">:3001</code>
+              1. Ingest telemetry using the API endpoints.
             </p>
             <p>
-              2. Set <code className="rounded bg-zinc-100 px-1">NEXT_PUBLIC_API_BASE_URL</code>
-              {" "}in <code className="rounded bg-zinc-100 px-1">apps/web/.env.local</code>
+              2. Fetch the 24-hour performance summary by vehicleId.
             </p>
             <p>
-              3. Open the analytics endpoint:
+              Analytics endpoint:
               {" "}
               <code className="rounded bg-zinc-100 px-1">
                 /v1/analytics/performance/&lt;vehicleId&gt;
@@ -49,10 +48,20 @@ export default function Home() {
         </section>
 
         <section className="rounded-xl border border-zinc-200 bg-white p-5">
-          <h2 className="text-base font-semibold">Sample request</h2>
+          <h2 className="text-base font-semibold">Sample requests</h2>
           <pre className="mt-2 overflow-x-auto rounded-lg bg-zinc-950 p-4 text-xs text-zinc-50">
-{`curl -s \ 
-  \"${process.env.NEXT_PUBLIC_API_BASE_URL ?? "http://localhost:3001"}/v1/analytics/performance/VEHICLE_001\" | jq`}
+{`# 1) Ingest Meter (AC)
+curl -s -X POST "${process.env.NEXT_PUBLIC_API_BASE_URL ?? ""}/v1/ingest/meter" \
+  -H "content-type: application/json" \
+  -d '{"meterId":"VEHICLE_001","kwhConsumedAc":10.5,"voltage":230.1,"timestamp":"2026-02-12T05:53:17Z"}'
+
+# 2) Ingest Vehicle (DC)
+curl -s -X POST "${process.env.NEXT_PUBLIC_API_BASE_URL ?? ""}/v1/ingest/vehicle" \
+  -H "content-type: application/json" \
+  -d '{"vehicleId":"VEHICLE_001","soc":57,"kwhDeliveredDc":8.9,"batteryTemp":36.2,"timestamp":"2026-02-12T05:53:17Z"}'
+
+# 3) Analytics
+curl -s "${process.env.NEXT_PUBLIC_API_BASE_URL ?? ""}/v1/analytics/performance/VEHICLE_001"`}
           </pre>
         </section>
       </main>
